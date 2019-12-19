@@ -1,8 +1,8 @@
+import { environment } from './../../environments/environment';
 import { AuthHttp } from 'angular2-jwt';
 import { Lancamento } from './../core/model';
-import { Headers, URLSearchParams } from '@angular/http';
+import { URLSearchParams } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { promise } from 'protractor';
 
 import 'rxjs/add/operator/toPromise';
 import * as moment from 'moment';
@@ -19,9 +19,11 @@ export class LancamentoFiltro {
 @Injectable()
 export class LancamentoService {
 
-  lancamentosURL = 'http://localhost:8080/lancamento';
+  lancamentosURL: string;
 
-  constructor(private http: AuthHttp) { }
+  constructor(private http: AuthHttp) {
+    this.lancamentosURL = `${environment.apiUrl}/lancamentos`;
+  }
 
   pesquisar(filtro: any): Promise<any> {
     const params = new URLSearchParams();

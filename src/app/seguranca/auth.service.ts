@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { JwtHelper } from 'angular2-jwt';
 import { Http, Headers, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
@@ -7,12 +8,13 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class AuthService {
 
-  oauthTokenUrl = 'http://localhost:8080/oauth/token';
+  oauthTokenUrl: string;
   jwtPayload: any;
 
   constructor(private http: Http,
               private jwtHelper: JwtHelper
               ) {
+              this.oauthTokenUrl = `${environment.apiUrl}/oauth/token`;
               this.carregarToken();
               }
 
@@ -43,8 +45,24 @@ export class AuthService {
       });
   }
 
+  isAccessTokenInvalido() {
+    const token = localStorage.getItem('token');
+
+    return !token || this.jwtHelper.isTokenExpired(token);
+  }
+
+
   temPermissao(permissao: string) {
     return this.jwtPayload && this.jwtPayload.authorities.includes(permissao);
+  }
+
+  temQualquerPermissao(roles) {
+    for (const role of roles) {
+      if (this.temPermissao(role)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private armazenarToken(token: string) {
@@ -71,6 +89,11 @@ export class AuthService {
       console.error('Erro ao renovar token.', response );
       return Promise.resolve(null);
     });
+  }
+// Implementado para o Logout
+  limparAccessToken() {
+    localStorage.removeItem('token');
+    this.jwtPayload = null;
   }
 
   private carregarToken() {
