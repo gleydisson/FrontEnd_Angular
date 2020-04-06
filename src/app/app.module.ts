@@ -1,3 +1,5 @@
+import { RelatoriosModule } from './relatorios/relatorios.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
@@ -9,6 +11,7 @@ import { CoreModule } from './core/core.module';
 import { HttpModule } from '@angular/http';
 import { AppRoundingModule } from './app-routing.module';
 import { SegurancaModule } from './seguranca/seguranca.module';
+
 
 @NgModule({
   declarations: [
@@ -23,8 +26,11 @@ import { SegurancaModule } from './seguranca/seguranca.module';
     PessoasModule,
     LancamentosModule,
     CoreModule,
+    RelatoriosModule,
     AppRoundingModule,
-    SegurancaModule
+    SegurancaModule,
+    DashboardModule,
+
 
   ],
   providers: [],

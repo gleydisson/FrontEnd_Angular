@@ -1,4 +1,4 @@
-import { Pessoa } from './../../core/model';
+import { Pessoa, Contato } from './../../core/model';
 import { FormControl } from '@angular/forms';
 import { PessoasService } from './../pessoas.service';
 import { ErrorHandlerService } from './../../core/error-handler.service';
@@ -15,6 +15,10 @@ import { Title } from '@angular/platform-browser';
 export class PessoaCadastroComponent implements OnInit {
 
   pessoa = new Pessoa();
+  estados: any[];
+  cidades: any[];
+  estadoSelecionado: number;
+
 
   constructor(private toasty: ToastyService, private errorHandle: ErrorHandlerService,
               private pessoasService: PessoasService,
@@ -31,6 +35,22 @@ export class PessoaCadastroComponent implements OnInit {
      }
 
      this.title.setTitle('Nova pessoa');
+
+     this.carregarEstados();
+  }
+
+  carregarEstados() {
+    this.pessoasService.listarEstados().then(lista => {
+      this.estados = lista.map(uf => ({label: uf.nome, value: uf.codigo}));
+    })
+    .catch(erro => this.errorHandle.handle(erro));
+  }
+
+  carregarCidades() {
+    this.pessoasService.pesquisarCidades(this.estadoSelecionado).then(lista => {
+      this.cidades = lista.map(c => ({label: c.nome, value: c.codigo}));
+    })
+    .catch(erro => this.errorHandle.handle(erro));
   }
 
   get editando() {
@@ -41,6 +61,12 @@ export class PessoaCadastroComponent implements OnInit {
     this.pessoasService.buscarPorCodigo(codigo)
       .then(pessoa => {
         this.pessoa = pessoa;
+        this.estadoSelecionado = (this.pessoa.endereco.cidade) ?
+          this.pessoa.endereco.cidade.estado.codigo : null;
+
+          if(this.estadoSelecionado) {
+            this.carregarCidades();
+          }
 
         this.atualizarTituloEdicao();
       })
